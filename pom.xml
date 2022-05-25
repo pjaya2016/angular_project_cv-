@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cv.project</name>
 	<description>Jay cv project</description>
-
+	<packaging>war</packaging>
 
 
 
