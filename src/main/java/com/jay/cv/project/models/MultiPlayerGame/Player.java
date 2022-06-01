@@ -9,14 +9,14 @@ import java.util.List;
 public class Player {
     private String userName;
     private Movement movement;
-    private List<String> numberOfUsersOnline = new ArrayList<>();
+    private String sessionId;
 
-    public List<String> getNumberOfUsersOnline() {
-        return numberOfUsersOnline;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setNumberOfUsersOnline(List<String> numberOfUsersOnline) {
-        this.numberOfUsersOnline = numberOfUsersOnline;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public String getUserName() {

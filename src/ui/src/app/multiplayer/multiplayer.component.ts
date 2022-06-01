@@ -54,6 +54,7 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   characterControls!: CharacterControls;
   gltflLoader = new GLTFLoader();
   playerCreated: boolean = false;
+  otherPlayerCreatedId: any = [];
 
 
   constructor() {
@@ -71,13 +72,13 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   }
 
 
-  loader() {
+  loader(name: string) {
     this.gltflLoader.load('../../assets/animations/Soldier.glb', (gltf) => {
       const model = gltf.scene;
       model.traverse(function (object: any) {
         if (object.isMesh) object.castShadow = true;
       })
-      model.name = this.name;
+      model.name = name;
       this.scene.add(model)
 
       const gltfAnimation: THREE.AnimationClip[] = gltf.animations;
@@ -104,27 +105,18 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   logKey(event: any) {
     if (this.playerCreated) {
       if (event['key'] === 'w' || event['key'] === 'W') {
-        this.player.movement.z += 1;
-        this.player.userName = this.name;
-        this.sendMessage(this.player)
         //this.characterControls.switchRunToggle()
         this.characterControls.directionPressed("w")
 
       } else if (event['key'] === 's' || event['key'] === 'S') {
 
-        this.player.userName = this.name;
         this.characterControls.directionPressed("s")
-        this.sendMessage(this.player)
       } else if (event['key'] === 'a' || event['key'] === 'A') {
 
-        this.player.userName = this.name;
         this.characterControls.directionPressed("a")
-        this.sendMessage(this.player)
       } else if (event['key'] === 'd' || event['key'] === 'D') {
 
-        this.player.userName = this.name;
         this.characterControls.directionPressed("d")
-        this.sendMessage(this.player)
       } else {
         this.characterControls.directionPressed("n/a")
       }
@@ -132,31 +124,58 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   }
 
   mychange() {
-    console.log(this.name)
+
     this.player.userName = this.name;
     this.sendMessage(this.player)
   }
 
   ngOnInit(): void {
+
     let client = Stomp.over(this.socket);
+    client.debug = () => { };
     // Start the STOMP communications, provide a callback for when the CONNECT frame arrives.
     client.connect({}, frame => {
       // Subscribe to "/topic/messages". Whenever a message arrives add the text in a list-item element in the unordered list.
       client.subscribe("/topic/messages", (payload: any) => {
-        this.player = JSON.parse(payload.body)
-        if (!this.playerCreated) {
-          if (this.player.userName === this.name) {
-            this.loader();
-            this.playerCreated = true;
+        let objArray = JSON.parse(payload.body)
+        /*if (!this.playerCreated) {
+          for (let i = 0; i < objArray.length; i++) {
+            if (objArray[i].userName === this.name) {
+              this.loader(this.name);
+              this.player = objArray[i]
+              this.playerCreated = true;
+            }
+          }
+        }*/
+
+
+        if (this.otherPlayerCreatedId.length > objArray.length) {
+          this.otherPlayerCreatedId = objArray.map((o: any) => o.sessionId);
+          console.log("Remove User")
+        }
+
+        for (let i = 0; i < objArray.length; i++) {
+          if (!this.otherPlayerCreatedId.includes(objArray[i]['sessionId'])) {
+            this.otherPlayerCreatedId.push(objArray[i]['sessionId']);
+            if (this.scene.getObjectByName(objArray[i]['userName']) === undefined) {
+              this.loader(objArray[i]['userName'])
+              this.playerCreated = true; 
+            }
+            console.log(this.scene)
           }
         }
+
+
+
       });
+
     });
   }
 
   public sendMessage(obj: any) {
     if (this.name.length > 0) {
       let client = Stomp.over(this.socket);
+      client.debug = () => { };
       client.send('/app/chat', {}, JSON.stringify(obj));
     }
   }
@@ -218,6 +237,9 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       let mixerUpdateDelta = component.clock.getDelta();
       if (component.characterControls !== undefined) {
         component.characterControls.update(mixerUpdateDelta)
+        component.player.movement = (component.scene.getObjectByName(component.name)?.position);
+        component.player.userName = component.name;
+        component.sendMessage(component.player);
       }
 
       component.renderer.render(component.scene, component.camera);

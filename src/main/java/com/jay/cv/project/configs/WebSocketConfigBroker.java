@@ -1,5 +1,7 @@
 package com.jay.cv.project.configs;
 
+import com.jay.cv.project.controllers.MultiPLayerController;
+import com.jay.cv.project.interceptor.ChannelInterceptorCustom;
 import com.jay.cv.project.interceptor.HandshakeInterceptorCustomer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,14 +15,9 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfigBroker implements WebSocketMessageBrokerConfigurer {
-
-    public static List<String> sessionIds = new ArrayList<>();
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -42,22 +39,10 @@ public class WebSocketConfigBroker implements WebSocketMessageBrokerConfigurer {
         return new HandshakeInterceptorCustomer();
     }
 
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    if (!sessionIds.contains(accessor.getSessionId())) {
-                        sessionIds.add(accessor.getSessionId());
-                    }
-                } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-                    sessionIds.removeIf(sessionId -> sessionId.equals(accessor.getSessionId()));
-                }
-                return message;
-            }
-        });
+        registration.interceptors(new ChannelInterceptorCustom());
     }
 
 }
