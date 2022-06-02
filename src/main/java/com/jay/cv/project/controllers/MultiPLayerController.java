@@ -1,6 +1,7 @@
 package com.jay.cv.project.controllers;
 
 import com.jay.cv.project.configs.WebSocketConfigBroker;
+import com.jay.cv.project.models.MultiPlayerGame.GameContext;
 import com.jay.cv.project.models.MultiPlayerGame.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,25 +22,27 @@ public class MultiPLayerController {
     @MessageMapping("/chat")
     // Sends the return value of this method to /topic/messages
     @SendTo("/topic/messages")
-    public List<Player> getMessages(Player player, SimpMessageHeaderAccessor headerAccessor) {
-        Player player1;
+    public GameContext getMessages(Player player, SimpMessageHeaderAccessor headerAccessor) {
         String sessionId = headerAccessor.getHeader("simpSessionId").toString();
-        Optional<Player> doesPlayerExists = players.stream().filter(p -> Objects.equals(p.getSessionId(), sessionId)).findFirst();
 
         int indexNum = IntStream.range(0, players.size())
                 .filter(i -> sessionId.equals(players.get(i).getSessionId()))
                 .findFirst()
                 .orElse(-1);
 
-        if (indexNum == -1) {
-            player.setSessionId(sessionId);
-            players.add(player);
-        } else {
-            Player p2 = players.get(indexNum);
-            p2.setMovement(player.getMovement());
-            players.set(indexNum, p2);
-        }
-        return players;
+            if (indexNum == -1) {
+                player.setSessionId(sessionId);
+                players.add(player);
+            } else {
+                Player p2 = players.get(indexNum);
+                p2.setMovement(player.getMovement());
+                p2.setRotation(player.getRotation());
+                p2.setMixerUpdateDelta(player.getMixerUpdateDelta());
+                p2.setKeyPressed(player.getKeyPressed());
+                players.set(indexNum, p2);
+            }
+        GameContext gameContext = new GameContext(player, players);
+        return gameContext;
     }
 
     // Sends the return value of this method to /topic/messages

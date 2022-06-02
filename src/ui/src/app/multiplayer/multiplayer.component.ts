@@ -5,6 +5,7 @@ import * as SockJS from 'sockjs-client';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { CharacterControls } from './CharacterControls';
+import { OtherPlayerControls } from './OtherPlayerControls';
 
 @Component({
   selector: 'app-multiplayer',
@@ -26,14 +27,6 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
   private camera!: THREE.PerspectiveCamera;
 
-  private modelReady = false
-  //Animation 
-  private mixer: THREE.AnimationMixer | undefined
-
-  private animationActions: THREE.AnimationAction[] = []
-
-  private activeAction: THREE.AnimationAction | undefined
-
   private clock = new THREE.Clock();
 
   private socket = new SockJS('http://localhost:8080/stomp');
@@ -47,7 +40,13 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       z: 0,
       x: 0,
       y: 0
-    }
+    }, rotation: {
+      z: 0,
+      x: 0,
+      y: 0
+    },
+    keyPressed: null,
+    mixerUpdateDelta: 0.0
   };
   controls: OrbitControls | undefined;
   lastAction: any;
@@ -55,10 +54,12 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   gltflLoader = new GLTFLoader();
   playerCreated: boolean = false;
   otherPlayerCreatedId: any = [];
+  otherPlayersControls: Array<OtherPlayerControls> = [];
+  objArray: any;
 
 
   constructor() {
-    window.addEventListener('resize', this.onWindowResize, false)
+
 
   }
 
@@ -72,13 +73,13 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   }
 
 
-  loader(name: string) {
+  loader(sessionId: string) {
     this.gltflLoader.load('../../assets/animations/Soldier.glb', (gltf) => {
       const model = gltf.scene;
       model.traverse(function (object: any) {
         if (object.isMesh) object.castShadow = true;
       })
-      model.name = name;
+      model.name = sessionId;
       this.scene.add(model)
 
       const gltfAnimation: THREE.AnimationClip[] = gltf.animations;
@@ -92,20 +93,42 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
     })
   }
 
+  loaderOtherPlayers(sessionId: string) {
+    this.gltflLoader.load('../../assets/animations/Soldier.glb', (gltf) => {
+      const model = gltf.scene;
+      model.traverse(function (object: any) {
+        if (object.isMesh) object.castShadow = true;
+      })
+      model.name = sessionId;
+      this.scene.add(model)
+
+      const gltfAnimation: THREE.AnimationClip[] = gltf.animations;
+      const mixer = new THREE.AnimationMixer(model);
+      const animationsMap: Map<string, THREE.AnimationAction> = new Map();
+      gltfAnimation.filter(a => a.name !== 'TPose').forEach((a: THREE.AnimationClip) => {
+        animationsMap.set(a.name, mixer.clipAction(a));
+      })
+      if (this.controls !== undefined)
+        this.otherPlayersControls.push(new OtherPlayerControls(model, mixer, animationsMap, 'Idle'));
+    })
+  }
+
 
 
 
   ngAfterViewInit(): void {
     document.addEventListener('keypress', this.logKey.bind(this));
+    document.addEventListener('resize', this.onWindowResize, false)
     this.createScene()
     this.startRenderingLoop()
     this.createPlane();
+
   }
 
   logKey(event: any) {
     if (this.playerCreated) {
+      this.player.keyPressed = event['key']
       if (event['key'] === 'w' || event['key'] === 'W') {
-        //this.characterControls.switchRunToggle()
         this.characterControls.directionPressed("w")
 
       } else if (event['key'] === 's' || event['key'] === 'S') {
@@ -115,7 +138,6 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
         this.characterControls.directionPressed("a")
       } else if (event['key'] === 'd' || event['key'] === 'D') {
-
         this.characterControls.directionPressed("d")
       } else {
         this.characterControls.directionPressed("n/a")
@@ -134,39 +156,34 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
     let client = Stomp.over(this.socket);
     client.debug = () => { };
     // Start the STOMP communications, provide a callback for when the CONNECT frame arrives.
-    client.connect({}, frame => {
+    client.connect({}, () => {
       // Subscribe to "/topic/messages". Whenever a message arrives add the text in a list-item element in the unordered list.
       client.subscribe("/topic/messages", (payload: any) => {
-        let objArray = JSON.parse(payload.body)
-        /*if (!this.playerCreated) {
-          for (let i = 0; i < objArray.length; i++) {
-            if (objArray[i].userName === this.name) {
-              this.loader(this.name);
-              this.player = objArray[i]
-              this.playerCreated = true;
-            }
+        this.objArray = JSON.parse(payload.body)
+        //Add current player in the session
+        if (!this.playerCreated) {
+          if (this.objArray.player['userName'] === this.name) {
+            this.loader(this.name);
+            this.player = this.objArray.player
+            this.playerCreated = true;
           }
-        }*/
-
-
-        if (this.otherPlayerCreatedId.length > objArray.length) {
-          this.otherPlayerCreatedId = objArray.map((o: any) => o.sessionId);
-          console.log("Remove User")
         }
 
-        for (let i = 0; i < objArray.length; i++) {
-          if (!this.otherPlayerCreatedId.includes(objArray[i]['sessionId'])) {
-            this.otherPlayerCreatedId.push(objArray[i]['sessionId']);
-            if (this.scene.getObjectByName(objArray[i]['userName']) === undefined) {
-              this.loader(objArray[i]['userName'])
-              this.playerCreated = true; 
+        //Adds other players
+        for (let i = 0; i < this.objArray.playerList.length; i++) {
+          if (!this.otherPlayerCreatedId.includes(this.objArray.playerList[i]['sessionId']) && this.objArray.playerList[i]['userName'] !== this.name) {
+            this.otherPlayerCreatedId.push(this.objArray.playerList[i]['sessionId']);
+            if (this.scene.getObjectByName(this.objArray.playerList[i]['sessionId']) === undefined) {
+              this.loaderOtherPlayers(this.objArray.playerList[i]['sessionId'])
             }
-            console.log(this.scene)
           }
         }
 
 
+      });
 
+      client.subscribe("/topic/disconnect", (payload: any) => {
+        this.removeEntity(payload.body)
       });
 
     });
@@ -193,9 +210,9 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
      */
     let aspectRatio = this.getAspectRatio();
     this.camera = new THREE.PerspectiveCamera(
-      75,
+      85,
       aspectRatio,
-      0.1, 1000
+      0.1, 100
     )
     this.camera.position.z = 4;
 
@@ -238,19 +255,34 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       if (component.characterControls !== undefined) {
         component.characterControls.update(mixerUpdateDelta)
         component.player.movement = (component.scene.getObjectByName(component.name)?.position);
+        let rotate = (component.scene.getObjectByName(component.name)?.rotation);
+        component.player.rotation = {
+          x: rotate?.x,
+          y: rotate?.y,
+          z: rotate?.z
+        }
         component.player.userName = component.name;
+        component.player.mixerUpdateDelta = mixerUpdateDelta;
         component.sendMessage(component.player);
       }
+
+      component.otherPlayersControls.forEach(opc => {
+        opc.update(mixerUpdateDelta,component.objArray)
+      })
 
       component.renderer.render(component.scene, component.camera);
     })()
   }
 
+  removeEntity(sessionId: string) {
+    let selectedObject = this.scene.getObjectByName(sessionId);
+    if (selectedObject !== undefined) this.scene.remove(selectedObject);
+  }
 
   onWindowResize() {
-    //this.camera.aspect = window.innerWidth / window.innerHeight
-    ///this.camera.updateProjectionMatrix()
-    //this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.camera.aspect = window.innerWidth / window.innerHeight
+    this.camera.updateProjectionMatrix()
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
     this.renderer.render(this.scene, this.camera);
   }
 

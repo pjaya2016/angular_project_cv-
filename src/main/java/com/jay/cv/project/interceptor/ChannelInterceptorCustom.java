@@ -19,8 +19,6 @@ public class ChannelInterceptorCustom implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-
-            MultiPLayerController.players.removeIf(player -> player.getSessionId().equals(accessor.getSessionId()));
         }
         return message;
     }
