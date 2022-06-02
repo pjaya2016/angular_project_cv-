@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "buildProduction": "ng build --prod --base-href https://powerful-tundra-15569.herokuapp.com/",
+    "buildProduction": "ng build --configuration dev --base-href https://powerful-tundra-15569.herokuapp.com/",
     "test": "ng test"
   },
   "private": true,

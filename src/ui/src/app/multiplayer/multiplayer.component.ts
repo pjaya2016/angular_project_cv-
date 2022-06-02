@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { CharacterControls } from './CharacterControls';
 import { OtherPlayerControls } from './OtherPlayerControls';
-
+import { environment } from '../../environments/environment.prod';
 @Component({
   selector: 'app-multiplayer',
   templateUrl: './multiplayer.component.html',
@@ -29,7 +29,9 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
   private clock = new THREE.Clock();
 
-  private socket = new SockJS('http://localhost:8080/stomp');
+
+
+  private socket;
   // Create a new StompClient object with the WebSocket endpoint
 
   name: string = '';
@@ -59,8 +61,7 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
 
   constructor() {
-
-
+    this.socket = new SockJS(environment.apiUrl + '/stomp');
   }
 
 
@@ -210,9 +211,9 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
      */
     let aspectRatio = this.getAspectRatio();
     this.camera = new THREE.PerspectiveCamera(
-      85,
+      75,
       aspectRatio,
-      0.1, 100
+      0.1, 1000
     )
     this.camera.position.z = 4;
 
@@ -267,7 +268,7 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       }
 
       component.otherPlayersControls.forEach(opc => {
-        opc.update(mixerUpdateDelta,component.objArray)
+        opc.update(mixerUpdateDelta, component.objArray)
       })
 
       component.renderer.render(component.scene, component.camera);
