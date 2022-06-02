@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   environmentName: 'LOCAL-DEV',
-  apiUrl: 'http://localhost:8080'
+  apiUrl: 'ws://localhost:8080'
 };
 
 /*
