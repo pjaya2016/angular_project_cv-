@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   environmentName: 'LOCAL-DEV',
-  apiUrl: 'ws://localhost:8080'
+  apiUrl: 'https://powerful-tundra-15569.herokuapp.com'
 };
 
 /*
