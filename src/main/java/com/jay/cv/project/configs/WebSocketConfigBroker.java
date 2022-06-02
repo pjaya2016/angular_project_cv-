@@ -17,7 +17,7 @@ public class WebSocketConfigBroker implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 
         registry.addEndpoint("/stomp")
-                .setAllowedOrigins("http://localhost:4200")
+                .setAllowedOrigins("http://localhost:4200/")
                 .addInterceptors(handshakeInterceptorCustomer())
                 .withSockJS();
     }
@@ -33,10 +33,5 @@ public class WebSocketConfigBroker implements WebSocketMessageBrokerConfigurer {
         return new HandshakeInterceptorCustomer();
     }
 
-
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        // registration.interceptors(new ChannelInterceptorCustom());
-    }
 
 }
