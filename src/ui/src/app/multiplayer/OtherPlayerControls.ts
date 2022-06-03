@@ -1,3 +1,4 @@
+import { Console } from "console";
 import * as THREE from "three";
 
 export class OtherPlayerControls {
@@ -83,6 +84,7 @@ export class OtherPlayerControls {
                 }
             }
         }
+
     }
 
 
