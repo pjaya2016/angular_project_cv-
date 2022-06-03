@@ -114,16 +114,12 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
     })
   }
 
-
-
-
   ngAfterViewInit(): void {
     document.addEventListener('keypress', this.logKey.bind(this));
     document.addEventListener('resize', this.onWindowResize, false)
     this.createScene()
     this.startRenderingLoop()
     this.createPlane();
-
   }
 
   logKey(event: any) {
