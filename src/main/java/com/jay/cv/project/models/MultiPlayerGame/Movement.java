@@ -1,31 +1,31 @@
 package com.jay.cv.project.models.MultiPlayerGame;
 
 public class Movement {
-    private Long x;
-    private Long y;
-    private Long z;
+    private Double x;
+    private Double y;
+    private Double z;
 
-    public Long getX() {
+    public Double getX() {
         return x;
     }
 
-    public void setX(Long x) {
+    public void setX(Double x) {
         this.x = x;
     }
 
-    public Long getY() {
+    public Double getY() {
         return y;
     }
 
-    public void setY(Long y) {
+    public void setY(Double y) {
         this.y = y;
     }
 
-    public Long getZ() {
+    public Double getZ() {
         return z;
     }
 
-    public void setZ(Long z) {
+    public void setZ(Double z) {
         this.z = z;
     }
 }

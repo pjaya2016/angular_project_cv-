@@ -1,3 +1,21 @@
-<canvas #canvas id="canvas" ></canvas>
-
-<input [(ngModel)]="name" #ctrl="ngModel" required pInputText (input)="mychange()">
+<div class="grid">
+  <div class="col-2">
+    <input [(ngModel)]="name" #ctrl="ngModel" required pInputText />
+    <p-button class="p-2" label="Enter" (click)="mychange()"></p-button>
+    <hr />
+    <div class="grid">
+      <div class="col-1 pt-4"><span class="dot"></span></div>
+      <div class="col-2"><p class="ml-2">Online</p></div>
+    </div>
+    <div class="grid" *ngIf="objArray !== undefined">
+      <div class="col">
+        <ul>
+          <li *ngFor="let item of objArray.playerList">
+            {{ item.userName }} + {{ item.sessionId }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-10"><canvas #canvas id="canvas"></canvas></div>
+</div>

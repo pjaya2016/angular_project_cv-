@@ -41,21 +41,17 @@ export class OtherPlayerControls {
         this.toggleRun = !this.toggleRun;
     }
 
-    public directionPressed(direction: any) {
-        this.direction = direction;
-    }
-
     public update(dalta:number,arrayObj: any) {
 
         if (this.model !== undefined && arrayObj.playerList.length > 0) {
             let player = arrayObj.playerList.filter((ao: any) => ao.sessionId === this.model?.name)[0]
     
-            this.directionPressed(player.keyPressed)
+            
             
 
-            if (this.toggleRun && this.direction == 'w' || this.direction == 'a' || this.direction == 's' || this.direction == 'd') {
+            if (this.toggleRun && player.keyPressed == 'w' || player.keyPressed == 'a' || player.keyPressed == 's' || player.keyPressed == 'd') {
                 this.play = 'Run';
-            } else if (this.direction == 'w' || this.direction == 'a' || this.direction == 's' || this.direction == 'd') {
+            } else if (player.keyPressed == 'w' || player.keyPressed == 'a' || player.keyPressed == 's' || player.keyPressed == 'd') {
                 this.play = 'Walk';
             } else {
                 this.play = 'Idle'

@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import {AccordionModule} from 'primeng/accordion';
 import {MenuItem} from 'primeng/api';
 import { MultiplayerComponent } from './multiplayer/multiplayer.component';
-
+import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 
 @NgModule({
@@ -21,7 +21,9 @@ import {InputTextModule} from 'primeng/inputtext';
     AppRoutingModule,
     AccordionModule,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    ButtonModule
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

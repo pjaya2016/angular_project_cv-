@@ -47,7 +47,6 @@ export class CharacterControls {
     }
 
     public directionPressed(direction: any) {
-        console.log(direction)
         this.direction = direction;
     }
 

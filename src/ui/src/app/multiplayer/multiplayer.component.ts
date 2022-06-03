@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { CharacterControls } from './CharacterControls';
 import { OtherPlayerControls } from './OtherPlayerControls';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-multiplayer',
   templateUrl: './multiplayer.component.html',
@@ -147,9 +147,12 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   }
 
   mychange() {
-
-    this.player.userName = this.name;
-    this.sendMessage(this.player)
+    if (this.name.length > 3) {
+      this.player.userName = this.name;
+      this.sendMessage(this.player)
+    } else {
+      //Throw Error
+    }
   }
 
   ngOnInit(): void {
@@ -172,8 +175,10 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
         //Adds other players
         for (let i = 0; i < this.objArray.playerList.length; i++) {
-          if (!this.otherPlayerCreatedId.includes(this.objArray.playerList[i]['sessionId']) && this.objArray.playerList[i]['userName'] !== this.name) {
-            this.otherPlayerCreatedId.push(this.objArray.playerList[i]['sessionId']);
+          if (
+            this.objArray.playerList[i]['userName'] !== this.name
+          ) {
+
             if (this.scene.getObjectByName(this.objArray.playerList[i]['sessionId']) === undefined) {
               this.loaderOtherPlayers(this.objArray.playerList[i]['sessionId'])
             }
