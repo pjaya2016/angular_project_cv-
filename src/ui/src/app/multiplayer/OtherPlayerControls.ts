@@ -41,50 +41,48 @@ export class OtherPlayerControls {
         this.toggleRun = !this.toggleRun;
     }
 
-    public update(dalta:number,arrayObj: any) {
+    public update(dalta: number, arrayObj: any) {
 
         if (this.model !== undefined && arrayObj.playerList.length > 0) {
             let player = arrayObj.playerList.filter((ao: any) => ao.sessionId === this.model?.name)[0]
-    
-            
-            
 
-            if (this.toggleRun && player.keyPressed == 'w' || player.keyPressed == 'a' || player.keyPressed == 's' || player.keyPressed == 'd') {
-                this.play = 'Run';
-            } else if (player.keyPressed == 'w' || player.keyPressed == 'a' || player.keyPressed == 's' || player.keyPressed == 'd') {
-                this.play = 'Walk';
-            } else {
-                this.play = 'Idle'
-            }
+            if (player !== undefined) {
+                if (this.toggleRun && player.keyPressed == 'w' || player.keyPressed == 'a' || player.keyPressed == 's' || player.keyPressed == 'd') {
+                    this.play = 'Run';
+                } else if (player.keyPressed == 'w' || player.keyPressed == 'a' || player.keyPressed == 's' || player.keyPressed == 'd') {
+                    this.play = 'Walk';
+                } else {
+                    this.play = 'Idle'
+                }
 
 
-            if (this.currentAction !== this.play) {
-                const toPlay = this.animationMap.get(this.play)
-                const current = this.animationMap.get(this.currentAction)
+                if (this.currentAction !== this.play) {
+                    const toPlay = this.animationMap.get(this.play)
+                    const current = this.animationMap.get(this.currentAction)
 
-                current?.fadeOut(this.fadeDuration);
-                toPlay?.reset().fadeIn(this.fadeDuration).play()
+                    current?.fadeOut(this.fadeDuration);
+                    toPlay?.reset().fadeIn(this.fadeDuration).play()
 
-                this.currentAction = this.play;
-            }
+                    this.currentAction = this.play;
+                }
 
-            this.mixer?.update(dalta);
+                this.mixer?.update(dalta);
 
-            if (this.currentAction == 'Run' || this.currentAction == "Walk") {
-                if (this.model !== undefined) {
-    
-                    this.model.position.x  = player.movement.x 
-                    this.model.position.z  = player.movement.z 
-                    this.model.position.y  = player.movement.y 
-                    //Rotation
-                    this.model.rotation.x  = player.rotation.x 
-                    this.model.rotation.z  = player.rotation.z 
-                    this.model.rotation.y  = player.rotation.y
+                if (this.currentAction == 'Run' || this.currentAction == "Walk") {
+                    if (this.model !== undefined) {
 
+                        this.model.position.x = player.movement.x
+                        this.model.position.z = player.movement.z
+                        this.model.position.y = player.movement.y
+                        //Rotation
+                        this.model.rotation.x = player.rotation.x
+                        this.model.rotation.z = player.rotation.z
+                        this.model.rotation.y = player.rotation.y
+
+                    }
                 }
             }
         }
-
     }
 
 

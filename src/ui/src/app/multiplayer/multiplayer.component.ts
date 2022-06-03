@@ -58,6 +58,7 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   otherPlayerCreatedId: any = [];
   otherPlayersControls: Array<OtherPlayerControls> = [];
   objArray: any;
+  currentModel: THREE.Group | undefined;
 
 
   constructor() {
@@ -76,13 +77,14 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
   loader(sessionId: string) {
     this.gltflLoader.load('../../assets/animations/Soldier.glb', (gltf) => {
+
       const model = gltf.scene;
       model.traverse(function (object: any) {
         if (object.isMesh) object.castShadow = true;
       })
       model.name = sessionId;
       this.scene.add(model)
-
+      this.currentModel = model;
       const gltfAnimation: THREE.AnimationClip[] = gltf.animations;
       const mixer = new THREE.AnimationMixer(model);
       const animationsMap: Map<string, THREE.AnimationAction> = new Map();
@@ -177,9 +179,7 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < this.objArray.playerList.length; i++) {
           if (!this.otherPlayerCreatedId.includes(this.objArray.playerList[i]['sessionId']) && this.objArray.playerList[i]['userName'] !== this.name) {
             this.otherPlayerCreatedId.push(this.objArray.playerList[i]['sessionId']);
-            if (this.scene.getObjectByName(this.objArray.playerList[i]['sessionId']) === undefined) {
-              this.loaderOtherPlayers(this.objArray.playerList[i]['sessionId'])
-            }
+            this.loaderOtherPlayers(this.objArray.playerList[i]['sessionId'])
           }
         }
 
@@ -258,8 +258,8 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       let mixerUpdateDelta = component.clock.getDelta();
       if (component.characterControls !== undefined) {
         component.characterControls.update(mixerUpdateDelta)
-        component.player.movement = (component.scene.getObjectByName(component.name)?.position);
-        let rotate = (component.scene.getObjectByName(component.name)?.rotation);
+        component.player.movement = component.currentModel?.position;
+        let rotate = component.currentModel?.rotation;
         component.player.rotation = {
           x: rotate?.x,
           y: rotate?.y,
