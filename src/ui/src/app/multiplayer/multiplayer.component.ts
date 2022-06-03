@@ -114,12 +114,16 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
     })
   }
 
+
+
+
   ngAfterViewInit(): void {
     document.addEventListener('keypress', this.logKey.bind(this));
     document.addEventListener('resize', this.onWindowResize, false)
     this.createScene()
     this.startRenderingLoop()
     this.createPlane();
+
   }
 
   logKey(event: any) {
@@ -171,10 +175,8 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
 
         //Adds other players
         for (let i = 0; i < this.objArray.playerList.length; i++) {
-          if (
-            this.objArray.playerList[i]['userName'] !== this.name
-          ) {
-
+          if (!this.otherPlayerCreatedId.includes(this.objArray.playerList[i]['sessionId']) && this.objArray.playerList[i]['userName'] !== this.name) {
+            this.otherPlayerCreatedId.push(this.objArray.playerList[i]['sessionId']);
             if (this.scene.getObjectByName(this.objArray.playerList[i]['sessionId']) === undefined) {
               this.loaderOtherPlayers(this.objArray.playerList[i]['sessionId'])
             }
