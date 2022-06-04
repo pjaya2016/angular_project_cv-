@@ -10,6 +10,7 @@ import {MenuItem} from 'primeng/api';
 import { MultiplayerComponent } from './multiplayer/multiplayer.component';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
+import {TabMenuModule} from 'primeng/tabmenu';
 
 @NgModule({
   declarations: [
@@ -22,8 +23,8 @@ import {InputTextModule} from 'primeng/inputtext';
     AccordionModule,
     InputTextModule,
     FormsModule,
-    ButtonModule
-    
+    ButtonModule,
+    TabMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]
