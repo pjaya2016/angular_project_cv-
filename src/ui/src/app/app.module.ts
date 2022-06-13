@@ -11,11 +11,13 @@ import { MultiplayerComponent } from './multiplayer/multiplayer.component';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {TabMenuModule} from 'primeng/tabmenu';
+import { AlgorithmComponent } from './algorithm/algorithm.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MultiplayerComponent
+    MultiplayerComponent,
+    AlgorithmComponent
   ],
   imports: [
     BrowserModule,

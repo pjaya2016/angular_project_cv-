@@ -1,7 +1,7 @@
-com\jay\cv\project\interceptor\HandshakeInterceptorCustomer.class
-com\jay\cv\project\models\MultiPlayerGame\Movement.class
 com\jay\cv\project\controllers\MultiPLayerController.class
 com\jay\cv\project\configs\WebSocketConfigBroker.class
 com\jay\cv\project\models\MultiPlayerGame\Player.class
+com\jay\cv\project\interceptor\HandshakeInterceptorCustomer.class
 com\jay\cv\project\Application.class
 com\jay\cv\project\utils\StompEventListener.class
+com\jay\cv\project\models\MultiPlayerGame\Movement.class
