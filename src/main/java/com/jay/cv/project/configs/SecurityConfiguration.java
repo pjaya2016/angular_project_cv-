@@ -10,12 +10,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/stomp")
+                .antMatchers("/stomp/**")
                 .permitAll()
                 .anyRequest()
-                .denyAll()
-               // .anyRequest()
-             //   .authenticated()
+                .authenticated()
                 .and()
                 .oauth2Login();
         return http.build();
