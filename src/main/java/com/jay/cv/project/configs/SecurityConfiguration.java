@@ -13,7 +13,9 @@ public class SecurityConfiguration {
                 .antMatchers("/stomp")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
+                .denyAll()
+               // .anyRequest()
+             //   .authenticated()
                 .and()
                 .oauth2Login();
         return http.build();
