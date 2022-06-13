@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.jay.cv.project.ApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.519 s - in com.jay.cv.project.ApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.038 s - in com.jay.cv.project.ApplicationTests
