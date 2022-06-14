@@ -7,6 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { CharacterControls } from './CharacterControls';
 import { OtherPlayerControls } from './OtherPlayerControls';
 import { environment } from '../../environments/environment';
+import { MultiplayerService } from './multiplayer.service';
 @Component({
   selector: 'app-multiplayer',
   templateUrl: './multiplayer.component.html',
@@ -61,8 +62,10 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   currentModel: THREE.Group | undefined;
 
 
-  constructor() {
+  constructor(private multiplayerService: MultiplayerService) {
     this.socket = new SockJS(environment.apiUrl + '/stomp');
+    console.log("Service")
+    multiplayerService.getUserDetails();
   }
 
 
