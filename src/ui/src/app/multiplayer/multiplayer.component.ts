@@ -65,7 +65,11 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   constructor(private multiplayerService: MultiplayerService) {
     this.socket = new SockJS(environment.apiUrl + '/stomp');
     console.log("Service")
-    multiplayerService.getUserDetails();
+    multiplayerService.getUserDetails().subscribe((res: any) => {
+      this.name = res['givenName']
+      this.playerCreated = true;
+      this.loader(res['givenName']);
+    });
   }
 
 
@@ -170,13 +174,13 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       client.subscribe("/topic/messages", (payload: any) => {
         this.objArray = JSON.parse(payload.body)
         //Add current player in the session
-        if (!this.playerCreated) {
-          if (this.objArray.player['userName'] === this.name) {
-            this.loader(this.name);
-            this.player = this.objArray.player
-            this.playerCreated = true;
-          }
-        }
+        /* if (!this.playerCreated) {
+           if (this.objArray.player['userName'] === this.name) {
+             this.loader(this.name);
+             this.player = this.objArray.player
+             this.playerCreated = true;
+           }
+         }*/
 
         //Adds other players
         for (let i = 0; i < this.objArray.playerList.length; i++) {

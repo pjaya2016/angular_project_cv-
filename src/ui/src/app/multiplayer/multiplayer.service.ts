@@ -10,8 +10,6 @@ export class MultiplayerService {
 
   // Uses http.get() to load data from a single API endpoint
   getUserDetails() {
-    return this.http.get('https://powerful-tundra-15569.herokuapp.com/api/v1/get-user-details').subscribe(res =>{
-      console.log(res)
-    });
+    return this.http.get('https://powerful-tundra-15569.herokuapp.com/api/v1/get-user-details');
   }
 }
