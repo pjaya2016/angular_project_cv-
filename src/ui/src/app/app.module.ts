@@ -12,12 +12,16 @@ import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {TabMenuModule} from 'primeng/tabmenu';
 import { AlgorithmComponent } from './algorithm/algorithm.component';
+import { HomeComponent } from './home/home.component';
+import {CardModule} from 'primeng/card';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     MultiplayerComponent,
-    AlgorithmComponent
+    AlgorithmComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +30,9 @@ import { AlgorithmComponent } from './algorithm/algorithm.component';
     InputTextModule,
     FormsModule,
     ButtonModule,
-    TabMenuModule
+    TabMenuModule,
+    CardModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

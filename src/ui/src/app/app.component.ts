@@ -17,11 +17,9 @@ export class AppComponent implements OnInit {
     this.items = [
       { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
       { label: 'Project 1', routerLink: ['multiplayer'] },
-      { label: 'Project 2', routerLink: ['algorithm'] },
     ];
     this.activeItem = this.items[0];
 
     this.primengConfig.ripple = true;
   }
-
 }
