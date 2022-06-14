@@ -176,13 +176,11 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
       client.subscribe("/topic/messages", (payload: any) => {
         this.objArray = JSON.parse(payload.body)
         //Add current player in the session
-        /* if (!this.playerCreated) {
+         if (!this.playerCreated) {
            if (this.objArray.player['userName'] === this.name) {
-             this.loader(this.name);
              this.player = this.objArray.player
-             this.playerCreated = true;
            }
-         }*/
+         }
 
         //Adds other players
         for (let i = 0; i < this.objArray.playerList.length; i++) {
