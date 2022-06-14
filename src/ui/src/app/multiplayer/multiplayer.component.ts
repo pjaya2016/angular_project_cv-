@@ -65,11 +65,13 @@ export class MultiplayerComponent implements OnInit, AfterViewInit {
   constructor(private multiplayerService: MultiplayerService) {
     this.socket = new SockJS(environment.apiUrl + '/stomp');
     console.log("Service")
-    multiplayerService.getUserDetails().subscribe((res: any) => {
-      this.name = res['givenName']
-      this.playerCreated = true;
-      this.loader(res['givenName']);
-    });
+    if (!this.playerCreated) {
+      multiplayerService.getUserDetails().subscribe((res: any) => {
+        this.name = res['givenName']
+        this.playerCreated = true;
+        this.loader(res['givenName']);
+      });
+    }
   }
 
 
